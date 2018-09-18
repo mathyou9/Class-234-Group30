@@ -1,0 +1,3 @@
+to change umask you type "umask" and a number such as 077
+
+to change default values on startup for your system you change the .bash_profile using vim or another text editor.

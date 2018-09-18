@@ -1,0 +1,19 @@
+Filesystems:
+cd = change directory
+ls = list directory
+
+Permissions:
+chmod = change mode = change access permissions
+chgrp = change group
+
+Job Control
+CTRL-Z = suspends program
+CTRL-C = Aborts program
+
+Tools
+grep = print lines that match pattern
+find = find file
+
+Input/Output redirection
+> = output to a directed file
+< = input from a file
