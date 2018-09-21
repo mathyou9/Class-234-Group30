@@ -1,0 +1,2 @@
+to make the program type make. To use the program type ./program
+I tested using ./program last | cat anotherin.txt to test another file source

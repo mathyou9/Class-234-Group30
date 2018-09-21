@@ -1,0 +1,2 @@
+I copied the folder problem-1 using the recursive tag using this command.
+cp -r problem-1 problem-2
