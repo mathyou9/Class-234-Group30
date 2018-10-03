@@ -1,8 +1,8 @@
-/* 
- * CS:APP Data Lab 
- * 
+/*
+ * CS:APP Data Lab
+ *
  * <Please put your name and userid here>
- * 
+ *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
@@ -10,7 +10,7 @@
  * compiler. You can still use printf for debugging without including
  * <stdio.h>, although you might get a compiler warning. In general,
  * it's not good practice to ignore compiler warnings, but in this
- * case it's OK.  
+ * case it's OK.
  */
 
 #if 0
@@ -24,11 +24,11 @@ You will provide your solution to the Data Lab by
 editing the collection of functions in this source file.
 
 INTEGER CODING RULES:
- 
+
   Replace the "return" statement in each function with one
-  or more lines of C code that implements the function. Your code 
+  or more lines of C code that implements the function. Your code
   must conform to the following style:
- 
+
   int Funct(arg1, arg2, ...) {
       /* brief description of how your implementation works */
       int var1 = Expr1;
@@ -47,7 +47,7 @@ INTEGER CODING RULES:
   2. Function arguments and local variables (no global variables).
   3. Unary integer operations ! ~
   4. Binary integer operations & ^ | + << >>
-    
+
   Some of the problems restrict the set of allowed operators even further.
   Each "Expr" may consist of multiple operators. You are not restricted to
   one operator per line.
@@ -62,7 +62,7 @@ INTEGER CODING RULES:
   7. Use any data type other than int.  This implies that you
      cannot use arrays, structs, or unions.
 
- 
+
   You may assume that your machine:
   1. Uses 2s complement, 32-bit representations of integers.
   2. Performs right shifts arithmetically.
@@ -106,26 +106,26 @@ You are expressly forbidden to:
 
 
 NOTES:
-  1. Use the dlc (data lab checker) compiler (described in the handout) to 
+  1. Use the dlc (data lab checker) compiler (described in the handout) to
      check the legality of your solutions.
   2. Each function has a maximum number of operators (! ~ & ^ | + << >>)
-     that you are allowed to use for your implementation of the function. 
-     The max operator count is checked by dlc. Note that '=' is not 
+     that you are allowed to use for your implementation of the function.
+     The max operator count is checked by dlc. Note that '=' is not
      counted; you may use as many of these as you want without penalty.
   3. Use the btest test harness to check your functions for correctness.
   4. Use the BDD checker to formally verify your functions
   5. The maximum number of ops for each function is given in the
-     header comment for each function. If there are any inconsistencies 
+     header comment for each function. If there are any inconsistencies
      between the maximum ops in the writeup and in this file, consider
      this file the authoritative source.
 
 /*
  * STEP 2: Modify the following functions according the coding rules.
- * 
+ *
  *   IMPORTANT. TO AVOID GRADING SURPRISES:
  *   1. Use the dlc compiler to check that your solutions conform
  *      to the coding rules.
- *   2. Use the BDD checker to formally verify that your solutions produce 
+ *   2. Use the BDD checker to formally verify that your solutions produce
  *      the correct answers.
  */
 
@@ -165,25 +165,32 @@ NOTES:
    2015-05-15).  */
 /* We do not support C11 <threads.h>.  */
 /* Rating 1 -- 2 points each */
-/* 
+/*
  * evenBits - return word with all even-numbered bits set to 1
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 8
  *   Rating: 1
  */
 int evenBits(void) {
-  return 2;
+  //0x55555555
+//(0x55 << 24) + (0x55 << 16) + (0x55 << 8) + 0x55
+    //0x55 << 8 + 0x55 = 0x5555
+    //0x55 << 24
+  return (0x55 << 24) + (0x55 << 16) + (0x55 << 8) + (0x55);
 }
-/* 
- * minusOne - return a value of -1 
+/*
+ * minusOne - return a value of -1s
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 2
  *   Rating: 1
  */
 int minusOne(void) {
-  return 2;
+  //0xFF
+  //~0x0
+  //(0xFF << 24) + (0xFF << 16) + (0xFF << 8) + (0xFF)
+  return ~0x0;
 }
-/* 
+/*
  * upperBits - pads n upper bits with 1's
  *  You may assume 0 <= n <= 32
  *  Example: upperBits(4) = 0xF0000000
@@ -192,10 +199,12 @@ int minusOne(void) {
  *  Rating: 1
  */
 int upperBits(int n) {
-  return 2;
+  //return n << (n + 2)
+  //
+  return (n << (n+2)) << 24;
 }
 /* Rating 2 -- 3 points each */
-/* 
+/*
  * getByte - Extract byte n from word x
  *   Bytes numbered from 0 (LSB) to 3 (MSB)
  *   Examples: getByte(0x12345678,1) = 0x56
@@ -206,8 +215,8 @@ int upperBits(int n) {
 int getByte(int x, int n) {
   return 2;
 }
-/* 
- * isNotEqual - return 0 if x == y, and 1 otherwise 
+/*
+ * isNotEqual - return 0 if x == y, and 1 otherwise
  *   Examples: isNotEqual(5,5) = 0, isNotEqual(4,5) = 1
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 6
@@ -217,8 +226,8 @@ int isNotEqual(int x, int y) {
   return 2;
 }
 /* Rating 3 -- 2 points each */
-/* 
- * conditional - same as x ? y : z 
+/*
+ * conditional - same as x ? y : z
  *   Example: conditional(2,4,5) = 4
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 16
@@ -227,8 +236,8 @@ int isNotEqual(int x, int y) {
 int conditional(int x, int y, int z) {
   return 2;
 }
-/* 
- * isGreater - if x > y  then return 1, else return 0 
+/*
+ * isGreater - if x > y  then return 1, else return 0
  *   Example: isGreater(4,5) = 0, isGreater(5,4) = 1
  *   Legal ops: ! ~ & ^ | + << >>
  *   Max ops: 24
@@ -238,7 +247,7 @@ int isGreater(int x, int y) {
   return 2;
 }
 /* Rating 4 -- 1 point each */
-/* 
+/*
  * absVal - absolute value of x
  *   Example: absVal(-1) = 1.
  *   You may assume -TMax <= x <= TMax
@@ -250,7 +259,7 @@ int absVal(int x) {
   return 2;
 }
 /* Float Rating 2 -- 3 points each */
-/* 
+/*
  * float_neg - Return bit-level equivalent of expression -f for
  *   floating point argument f.
  *   Both the argument and result are passed as unsigned int's, but
@@ -265,7 +274,7 @@ unsigned float_neg(unsigned uf) {
  return 2;
 }
 /* Float Rating 4 -- 1 point each */
-/* 
+/*
  * float_f2i - Return bit-level equivalent of expression (int) f
  *   for floating point argument f.
  *   Argument is passed as unsigned int, but
