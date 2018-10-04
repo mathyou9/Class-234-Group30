@@ -254,6 +254,21 @@ int isGreater(int x, int y) {
   //int xL = ~x & y;
   //int xG = x & ~y;
   //
+  //xL |= xL >> 1;
+  //xL |= xL >> 2;
+  //xL |= xL >> 4;
+  //xL |= xL >> 8;
+  //xL |= xL >> 16;
+  //
+  //int final = xG & ~xL;
+  //
+  //final |= final >> 1;
+  //final |= final >> 2;
+  //final |= final >> 4;
+  //final |= final >> 8;
+  //final |= final >> 16;
+  //
+  //return final;
   //
   //return (() |= () << ) & 1    //1000 0000 0000 0000
   return 2;
