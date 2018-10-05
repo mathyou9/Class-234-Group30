@@ -2,6 +2,7 @@
  * CS:APP Data Lab
  *
  * <Please put your name and userid here>
+ * <Christopher White - ralfil>
  *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
@@ -129,7 +130,6 @@ NOTES:
  *      the correct answers.
  */
 
-
 #endif
 /* Copyright (C) 1991-2016 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
@@ -199,9 +199,16 @@ int minusOne(void) {
  *  Rating: 1
  */
 int upperBits(int n) {
-  //return n << (n + 2)
+  //int x = 0x8
+  //return x >> n;
+  //return 0-n >> n
   //
-  return (n << (n+2)) << 24;
+  //(!!n << 32) >> n
+  //
+  //return n << (n + 2)
+  //(n << (n+2)) << 24
+  //((!!n << 31) >> (n + ~0)
+  return (!!n << 31) >> (n + ~0);
 }
 /* Rating 2 -- 3 points each */
 /*
@@ -213,7 +220,16 @@ int upperBits(int n) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-  return 2;
+  //((x << shiftLeft) >> 24) & 0xFF
+  //if (n = 3)
+  //then shiftLeft = 0
+  //if (n = 2)
+  //then shiftLeft = 8
+  //if (n = 1)
+  //then shiftLeft = 16
+  //if (n = 0)
+  //then shiftLeft = 24
+  return (x >> (n<<3)) & 0xFF;
 }
 /*
  * isNotEqual - return 0 if x == y, and 1 otherwise
@@ -223,7 +239,9 @@ int getByte(int x, int n) {
  *   Rating: 2
  */
 int isNotEqual(int x, int y) {
-  return 2;
+  //!!(~x & y)
+  //!(x ^ y)
+  return !!(x ^ y);
 }
 /* Rating 3 -- 2 points each */
 /*
@@ -234,7 +252,22 @@ int isNotEqual(int x, int y) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  //final = !!x
+  //final = 0x1 ^ y ^ final
+  //final = 0x0 ^ z ^ final
+  //x = !!x;
+  //int final = 0x0 ^ z ^ x;
+  //final = 0x1 ^ y ^ x;
+  //
+  //int final1 = y&(~(!!x)+1)
+  //int final2 = z&(~(!!x)+1)
+  //
+  int a = !!x;
+  int b = !x;
+  int final1 = y & ( ~a + 1);
+  int final2 = z & ( ~b + 1);
+  //return (y & ((~(!!x)) + 1)) | (y & ((~(!x)) + 1));
+  return final1 | final2;
 }
 /*
  * isGreater - if x > y  then return 1, else return 0
@@ -244,6 +277,7 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
+  //a = 1000 0000 0000 0000 0000 0000 0000 0000
   //a |= a >> 1 = 1100 0000 0000 0000 0000 0000 0000 0000
   //a |= a >> 2 = 1111 0000 0000 0000 0000 0000 0000 0000
   //a |= a >> 4 = 1111 1111 0000 0000 0000 0000 0000 0000
@@ -251,27 +285,31 @@ int isGreater(int x, int y) {
   //a |= a >> 16 = 1111 1111 1111 1111 1111 1111 1111 1111
   //a & 1 = 0000 0000 0000 0000 0000 0000 0000 0001
   //
-  //int xL = ~x & y;
-  //int xG = x & ~y;
+  int xL = ~x & y;
+  int xG = x & ~y;
   //
-  //xL |= xL >> 1;
-  //xL |= xL >> 2;
-  //xL |= xL >> 4;
-  //xL |= xL >> 8;
-  //xL |= xL >> 16;
+  xL = xL | (xL >> 1);
+  xL = xL | (xL >> 2);
+  xL = xL | (xL >> 4);
+  xL = xL | (xL >> 8);
+  xL = xL | (xL >> 16);
   //
-  //int final = xG & ~xL;
+  int final = xG & ~xL;
   //
-  //final |= final >> 1;
-  //final |= final >> 2;
-  //final |= final >> 4;
-  //final |= final >> 8;
-  //final |= final >> 16;
+  final = final | (final >> 1);
+  final = final | (final >> 2);
+  final = final | (final >> 4);
+  final = final | (final >> 8);
+  final = final | (final >> 16);
+
+  final = ~final & 1;
   //
-  //return final;
+  return final;
   //
-  //return (() |= () << ) & 1    //1000 0000 0000 0000
-  return 2;
+  //
+  //return (() |= () << ) & 1;
+      //1000 0000 0000 0000
+  //return 2;
 }
 /* Rating 4 -- 1 point each */
 /*
