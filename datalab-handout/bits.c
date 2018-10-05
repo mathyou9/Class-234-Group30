@@ -279,8 +279,8 @@ int conditional(int x, int y, int z) {
 int isGreater(int x, int y) {
   //exploits -z == ~z + 1
 
-	int xMSB = (x>>31) & 1; //x most sig bit
-	int yMSB = (y>>31) & 1; //y most sig bit
+	int xMSB = (x>>31) & 1;
+	int yMSB = (y>>31) & 1; //x most sig bit, y most sig bit
 
 
 	return (
