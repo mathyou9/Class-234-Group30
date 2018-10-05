@@ -277,51 +277,23 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  //a = 1000 0000 0000 0000 0000 0000 0000 0000
-  //a |= a >> 1 = 1100 0000 0000 0000 0000 0000 0000 0000
-  //a |= a >> 2 = 1111 0000 0000 0000 0000 0000 0000 0000
-  //a |= a >> 4 = 1111 1111 0000 0000 0000 0000 0000 0000
-  //a |= a >> 8 = 1111 1111 1111 1111 0000 0000 0000 0000
-  //a |= a >> 16 = 1111 1111 1111 1111 1111 1111 1111 1111
-  //a & 1 = 0000 0000 0000 0000 0000 0000 0000 0001
-  //
-  int diff = x ^ y;
-  diff |= diff >> 1;
-  diff |= diff >> 2;
-  diff |= diff >> 4;
-  diff |= diff >> 8;
-  diff |= diff >> 16;
-  //
-  diff &= ~(diff >> 1) | (0x8 << 28);
-  diff &= (x ^ (0x8 << 28)) & (y ^ (0xFF >> 24));
-  //
-  return !!diff;
-  //
-  //int xL = ~x & y;
-  //int xG = x & ~y;
-  //
-  //xL = xL | (xL >> 1);
-  //xL = xL | (xL >> 2);
-  //xL = xL | (xL >> 4);
-  //xL = xL | (xL >> 8);
-  //xL = xL | (xL >> 16);
-  //
-  //int final = xG & ~xL;
-  //
-  //final = final | (final >> 1);
-  //final = final | (final >> 2);
-  //final = final | (final >> 4);
-  //final = final | (final >> 8);
-  //final = final | (final >> 16);
+  //exploits -z == ~z + 1
 
-  //final = ~final & 1;
-  //
-  //return final;
-  //
-  //
-  //return (() |= () << ) & 1;
-      //1000 0000 0000 0000
-  //return 2;
+	int xMSB = (x>>31) & 1;
+	int yMSB = (y>>31) & 1; //x most sig bit, y most sig bit
+
+
+	return (
+	( //first calc is if the signs are the same
+	  (!(xMSB ^ yMSB)) & //x and y have the same sign
+	  ((y + (~x + 1) /*y-x*/ )>>31 & 1) //y-x is a negative number
+	)
+	| //next, if the signs are different and y is negative, x>y
+	(
+	  (xMSB ^ yMSB) & //x and y have different signs
+	  (yMSB & 1) //y is negative
+	));
+  //return (((!(xMSB ^ yMSB)) & ((y + (~x + 1))>>31 & 1)) | ((xMSB ^ yMSB) & (yMSB & 1)));
 }
 /* Rating 4 -- 1 point each */
 /*
@@ -333,18 +305,10 @@ int isGreater(int x, int y) {
  *   Rating: 4
  */
 int absVal(int x) {
-  //
-  //int negX = (x >> 31)
-  //if (negX == 1)
-  //then return ~x + 1
-  //else
-  //return x
-  int negX = (x >> 31);
-  int posX = !negX;
-  int final1 = x & ( ~negX + 1);
-  int final2 = x & ( ~posX + 1);
-  return final1 | final2;
-  //return 2;
+  int mask = x >> 31;
+  int ret = x + mask;
+  ret = ret ^ mask;
+  return ret;
 }
 /* Float Rating 2 -- 3 points each */
 /*
@@ -359,7 +323,15 @@ int absVal(int x) {
  *   Rating: 2
  */
 unsigned float_neg(unsigned uf) {
- return 2;
+  int nanCheck = 0x000000FF << 23; //1's in the 8 exponent bits
+  int frac = 0x7FFFFF & uf; //contains just the fraction value
+
+  //return argument if exp bits are all 1's and frac is not zero
+  if((nanCheck & uf) == nanCheck && frac)
+    return uf;
+
+  //otherwise, just flip the sign bit
+  return uf ^ (1 << 31);
 }
 /* Float Rating 4 -- 1 point each */
 /*
@@ -375,5 +347,49 @@ unsigned float_neg(unsigned uf) {
  *   Rating: 4
  */
 int float_f2i(unsigned uf) {
-  return 2;
+  unsigned sign = uf >> 31;
+  unsigned exp = (uf >> 23) & 0xFF;
+  unsigned frac =(uf & 0x7FFFFF);
+  unsigned bias = 0x7F;
+  unsigned res = frac;
+
+  // special cases: NaN and Inf
+  if (exp == 0xFF)
+  {
+    return 0x80000000u;
+  }
+
+  // denormalized case and normalized exp less than Bias cases
+  if (exp < bias)
+  {
+    return 0x0;
+  }
+  // normalized cases
+  exp -= bias;
+
+  // overflow case
+  if (exp >= 31)
+  {
+    return 0x80000000u;
+  }
+
+  // get integer result after shift corresponding bits
+  if (exp > 22)
+  {
+    res = frac << (exp - 23);
+  }
+  else
+  {
+    res = frac >> (23 - exp);
+  }
+
+  // add 1 << exp for normalized case
+  res += 1 << exp;
+
+  // if sign = 1, change its sign
+  if (sign) {
+    res = -res;
+  }
+
+  return res;
 }
