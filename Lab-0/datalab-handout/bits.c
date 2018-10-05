@@ -285,26 +285,38 @@ int isGreater(int x, int y) {
   //a |= a >> 16 = 1111 1111 1111 1111 1111 1111 1111 1111
   //a & 1 = 0000 0000 0000 0000 0000 0000 0000 0001
   //
-  int xL = ~x & y;
-  int xG = x & ~y;
+  int diff = x ^ y;
+  diff |= diff >> 1;
+  diff |= diff >> 2;
+  diff |= diff >> 4;
+  diff |= diff >> 8;
+  diff |= diff >> 16;
   //
-  xL = xL | (xL >> 1);
-  xL = xL | (xL >> 2);
-  xL = xL | (xL >> 4);
-  xL = xL | (xL >> 8);
-  xL = xL | (xL >> 16);
+  diff &= ~(diff >> 1) | (0x8 << 28);
+  diff &= (x ^ (0x8 << 28)) & (y ^ (0xFF >> 24));
   //
-  int final = xG & ~xL;
+  return !!diff;
   //
-  final = final | (final >> 1);
-  final = final | (final >> 2);
-  final = final | (final >> 4);
-  final = final | (final >> 8);
-  final = final | (final >> 16);
+  //int xL = ~x & y;
+  //int xG = x & ~y;
+  //
+  //xL = xL | (xL >> 1);
+  //xL = xL | (xL >> 2);
+  //xL = xL | (xL >> 4);
+  //xL = xL | (xL >> 8);
+  //xL = xL | (xL >> 16);
+  //
+  //int final = xG & ~xL;
+  //
+  //final = final | (final >> 1);
+  //final = final | (final >> 2);
+  //final = final | (final >> 4);
+  //final = final | (final >> 8);
+  //final = final | (final >> 16);
 
-  final = ~final & 1;
+  //final = ~final & 1;
   //
-  return final;
+  //return final;
   //
   //
   //return (() |= () << ) & 1;
@@ -321,7 +333,18 @@ int isGreater(int x, int y) {
  *   Rating: 4
  */
 int absVal(int x) {
-  return 2;
+  //
+  //int negX = (x >> 31)
+  //if (negX == 1)
+  //then return ~x + 1
+  //else
+  //return x
+  int negX = (x >> 31);
+  int posX = !negX;
+  int final1 = x & ( ~negX + 1);
+  int final2 = x & ( ~posX + 1);
+  return final1 | final2;
+  //return 2;
 }
 /* Float Rating 2 -- 3 points each */
 /*
