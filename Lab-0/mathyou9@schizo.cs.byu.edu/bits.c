@@ -345,11 +345,8 @@ unsigned float_neg(unsigned uf) {
   unsigned check = 0x80000000;
   unsigned NaN = 0x7FC00000;
   unsigned infinity = 0xFFC00000;
-  if (uf == NaN)
-    return uf;
-  if (uf == infinity){
-    return uf;
-  }
+  if (uf == NaN || uf == infinity)
+      return uf;
   return uf ^ check;
 
 }
